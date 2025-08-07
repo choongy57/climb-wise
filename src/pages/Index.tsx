@@ -5,13 +5,14 @@ import { VideoUpload } from '@/components/VideoUpload';
 import { VideoPlayer } from '@/components/VideoPlayer';
 import { AnalysisSidebar } from '@/components/AnalysisSidebar';
 import { Mountain, Zap, Play } from 'lucide-react';
-import { simulateApiCall, mockAnalysisResults } from '@/utils/mockData';
+import { simulateApiCall, mockAnalysisResults, generateMockFeedbackItems, generateMockMoveCompletions, mockCoachingAdvice } from '@/utils/mockData';
 
 const Index = () => {
   const [selectedVideo, setSelectedVideo] = useState<File | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResults, setAnalysisResults] = useState<any>(null);
   const [currentTime, setCurrentTime] = useState(0);
+  const [videoDuration, setVideoDuration] = useState(0);
 
   const handleVideoSelect = (file: File) => {
     setSelectedVideo(file);
@@ -31,7 +32,15 @@ const Index = () => {
     // Simulate backend analysis
     await simulateApiCall(3000);
     
-    setAnalysisResults(mockAnalysisResults);
+    // Generate dynamic mock data based on video duration
+    const dynamicResults = {
+      efficiencyScore: 72,
+      feedbackItems: videoDuration > 0 ? generateMockFeedbackItems(videoDuration) : mockAnalysisResults.feedbackItems,
+      moveCompletions: videoDuration > 0 ? generateMockMoveCompletions(videoDuration) : mockAnalysisResults.moveCompletions,
+      coachingAdvice: mockCoachingAdvice
+    };
+    
+    setAnalysisResults(dynamicResults);
     setIsAnalyzing(false);
   };
 
@@ -141,6 +150,7 @@ const Index = () => {
               <VideoPlayer 
                 videoFile={selectedVideo}
                 onTimeUpdate={setCurrentTime}
+                onDurationChange={setVideoDuration}
                 overlayData={analysisResults}
               />
             </div>

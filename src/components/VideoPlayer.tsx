@@ -6,10 +6,11 @@ import { Play, Pause, SkipBack, SkipForward, Volume2 } from 'lucide-react';
 interface VideoPlayerProps {
   videoFile: File;
   onTimeUpdate?: (currentTime: number) => void;
+  onDurationChange?: (duration: number) => void;
   overlayData?: any;
 }
 
-export const VideoPlayer = ({ videoFile, onTimeUpdate, overlayData }: VideoPlayerProps) => {
+export const VideoPlayer = ({ videoFile, onTimeUpdate, onDurationChange, overlayData }: VideoPlayerProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -45,7 +46,9 @@ export const VideoPlayer = ({ videoFile, onTimeUpdate, overlayData }: VideoPlaye
 
   const handleLoadedMetadata = () => {
     if (videoRef.current) {
-      setDuration(videoRef.current.duration);
+      const videoDuration = videoRef.current.duration;
+      setDuration(videoDuration);
+      onDurationChange?.(videoDuration);
     }
   };
 
